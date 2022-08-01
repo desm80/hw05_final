@@ -52,11 +52,6 @@ class PostViewsTests(Settings):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
 
-    def test_404_uses_custom_template(self):
-        settings.DEBUG = False
-        response = self.authorized_client.get('page_404/')
-        self.assertTemplateUsed(response, 'core/404.html')
-
     def test_home_group_list_profile_show_correct_context(self):
         """Шаблон home, group_list, profile сформирован с правильным
         контекстом."""
