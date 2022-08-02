@@ -57,9 +57,11 @@ def profile(request, username):
         )
     else:
         return render(
-            request, 'posts/profile.html', {'page_obj': page_obj,
-                                            'author': author
-                                            }
+            request, 'posts/profile.html',
+            {
+                'page_obj': page_obj,
+                'author': author,
+            }
         )
 
 
@@ -92,9 +94,11 @@ def post_edit(request, post_id):
             form.save()
             return redirect(f'/posts/{post_id}')
         return render(request, 'posts/create_post.html',
-                      {'form': form,
-                       'is_edit': True
-                       })
+                      {
+                          'form': form,
+                          'is_edit': True
+                       }
+                      )
     else:
         return redirect('posts:post_detail', post_id=post_id)
 
