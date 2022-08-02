@@ -9,7 +9,7 @@ from .models import Group, Post, User
 
 
 def get_page_obj(request, *args):
-    """Получение объекта page_obj для пагинатора"""
+    """Получение объекта page_obj для пагинатора."""
     paginator = Paginator(*args, settings.POSTS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -19,7 +19,7 @@ def get_page_obj(request, *args):
 @cache_page(20, key_prefix='index_page')
 def index(request):
     """Стартовая страница проекта, выводятся все посты без фильтрации,
-    посты представлены в краткой версии"""
+    посты представлены в краткой версии."""
     template = 'posts/index.html'
     page_obj = get_page_obj(request, Post.objects.all().select_related(
         'author', 'group'))
@@ -30,7 +30,7 @@ def index(request):
 
 
 def group_posts(request, slug):
-    """Вывод постов по группам, применена пагинация по 10"""
+    """Вывод постов по группам, применена пагинация по 10."""
     template = 'posts/group_list.html'
     group = get_object_or_404(Group, slug=slug)
     page_obj = get_page_obj(request, group.posts.all().select_related('author')
@@ -43,7 +43,7 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
-    """Профайл автора со всеми его постами"""
+    """Профайл автора со всеми его постами."""
     author = get_object_or_404(User, username=username)
     page_obj = get_page_obj(request, author.posts.all().select_related(
         'group'))
@@ -65,7 +65,7 @@ def profile(request, username):
 
 @login_required
 def post_create(request):
-    """Функция обработки формы для создания нового поста"""
+    """Функция обработки формы для создания нового поста."""
     form = PostForm(
         request.POST or None,
         files=request.FILES or None,
@@ -80,7 +80,7 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
-    """Функция обработки формы для редактирования поста автора"""
+    """Функция обработки формы для редактирования поста автора."""
     post = get_object_or_404(Post, pk=post_id)
     if request.user.id == post.author.id:
         form = PostForm(
@@ -100,7 +100,7 @@ def post_edit(request, post_id):
 
 
 def post_detail(request, post_id):
-    """Вывод полной версии поста"""
+    """Вывод полной версии поста."""
     post = get_object_or_404(Post, pk=post_id)
     comments = post.comments.all().select_related('author')
     form = CommentForm()
@@ -114,7 +114,7 @@ def post_detail(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
-    """Функция комментирования постов авторов"""
+    """Функция комментирования постов авторов."""
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST or None)
     if form.is_valid():
