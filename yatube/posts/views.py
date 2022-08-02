@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import CommentForm, PostForm
-from .models import Follow, Group, Post, User
+from .models import Group, Post, User
 
 
 def get_page_obj(request, *args):
@@ -52,8 +52,7 @@ def profile(request, username):
             request, 'posts/profile.html',
             {'page_obj': page_obj,
              'author': author,
-             'following': Follow.objects.filter(
-                 user=request.user, author=author).exists()
+             'following': author.following.filter(user=request.user).exists(),
              }
         )
     else:
@@ -145,10 +144,9 @@ def follow_index(request):
 def profile_follow(request, username):
     """Подписаться на автора."""
     author = get_object_or_404(User, username=username)
-    if (request.user.username != username and request.user.id not in
-            author.following.values('user_id')):
-        Follow.objects.create(
-            user=request.user, author=author)
+    if (request.user.username != username and author.following.filter(
+            user=request.user).exists() is False):
+        author.following.create(user=request.user)
         return redirect('posts:profile', username)
     else:
         return redirect('posts:profile', username)
@@ -156,9 +154,8 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
-    """Отписаться от автора"""
-    follow = Follow.objects.filter(
-        user=request.user, author=get_object_or_404(User, username=username)
-    )
+    """Отписаться от автора."""
+    author = get_object_or_404(User, username=username)
+    follow = author.following.filter(user=request.user)
     follow.delete()
     return redirect('posts:profile', username)

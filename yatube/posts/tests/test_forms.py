@@ -5,7 +5,6 @@ from http import HTTPStatus
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-
 from posts.models import Comment, Post
 from posts.tests.fixtures.fixture_data import Settings
 
