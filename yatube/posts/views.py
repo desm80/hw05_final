@@ -129,12 +129,12 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    """Вывод постов авторов по подписке"""
-    authors = Follow.objects.filter(user=request.user)
+    """Вывод постов авторов по подписке."""
     page_obj = get_page_obj(
         request, Post.objects.filter(
-            author_id__in=authors.values('author_id')).select_related(
-            'group'))
+            author_id__in=request.user.follower.values(
+                'author_id')).select_related('group')
+    )
     context = {
         'page_obj': page_obj,
     }
@@ -143,11 +143,15 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    """Подписаться на автора"""
-    Follow.objects.create(
-        user=request.user, author=get_object_or_404(User, username=username)
-    )
-    return redirect('posts:profile', username)
+    """Подписаться на автора."""
+    author = get_object_or_404(User, username=username)
+    if (request.user.username != username and request.user.id not in
+            author.following.values('user_id')):
+        Follow.objects.create(
+            user=request.user, author=author)
+        return redirect('posts:profile', username)
+    else:
+        return redirect('posts:profile', username)
 
 
 @login_required
