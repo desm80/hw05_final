@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 User = get_user_model()
@@ -98,6 +99,8 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
+    IS_CLEAR = False
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -112,5 +115,22 @@ class Follow(models.Model):
     )
 
     class Meta:
+        unique_together = ('user', 'author')
         verbose_name = 'Подписку'
         verbose_name_plural = 'Подписки'
+
+    def save(self, *args, **kwargs):
+        if not self.IS_CLEAR:
+            self.full_clean()
+        return super().save(*args, **kwargs)
+
+    def clean(self):
+        self.IS_CLEAR = True
+        if (
+                self.author
+                and self.author.get_username() == self.user.get_username()
+        ):
+            raise ValidationError(
+                'Пользователь не может быть подписан на себя!'
+            )
+        return super().clean()

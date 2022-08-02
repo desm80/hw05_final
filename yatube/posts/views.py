@@ -131,8 +131,7 @@ def follow_index(request):
     """Вывод постов авторов по подписке."""
     page_obj = get_page_obj(
         request, Post.objects.filter(
-            author_id__in=request.user.follower.values(
-                'author_id')).select_related('group')
+            author__following__user=request.user).select_related('group')
     )
     context = {
         'page_obj': page_obj,
