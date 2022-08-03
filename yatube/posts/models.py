@@ -1,3 +1,4 @@
+from core.models import CreatedModel
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -67,7 +68,7 @@ class Group(models.Model):
         verbose_name_plural = 'Группы'
 
 
-class Comment(models.Model):
+class Comment(CreatedModel):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
@@ -85,11 +86,6 @@ class Comment(models.Model):
         help_text='Введите текст комментария',
         blank=False,
         null=False,
-    )
-    created = models.DateTimeField(
-        'Дата публикации',
-        auto_now_add=True,
-        db_index=True
     )
 
     class Meta:

@@ -1,4 +1,3 @@
-import shutil
 import tempfile
 from http import HTTPStatus
 
@@ -30,11 +29,6 @@ class PostFormTests(Settings):
             'text': 'Тестовый пост из формы',
             'group': self.group2.id,
         }
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def test_post_create(self):
         """Валидная форма создает запись в Post."""

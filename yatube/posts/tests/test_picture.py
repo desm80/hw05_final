@@ -3,6 +3,7 @@ import tempfile
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
@@ -35,6 +36,7 @@ class PostCreateFormTests(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        cache.clear()
 
     def test_create_post(self):
         """Валидная форма создает запись в Post."""

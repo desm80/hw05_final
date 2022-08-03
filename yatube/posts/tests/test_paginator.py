@@ -3,6 +3,7 @@ from random import randint
 # from yatube.settings import POSTS_PER_PAGE
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -40,6 +41,11 @@ class PaginatorViewsTest(TestCase):
             reverse('posts:profile', kwargs={'username': cls.user}),
             reverse('posts:home'),
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cache.clear()
 
     def test_correct_page_context_guest_client(self):
         """Проверка количества постов на страницах для не авторизованного

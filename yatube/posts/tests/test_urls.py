@@ -13,6 +13,11 @@ class StaticURLTests(TestCase):
     def setUp(self):
         self.guest_client = Client()
 
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cache.clear()
+
     def test_homepage(self):
         response = self.guest_client.get('/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
